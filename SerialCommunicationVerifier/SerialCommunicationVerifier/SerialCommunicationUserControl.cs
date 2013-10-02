@@ -37,6 +37,10 @@ namespace SerialCommunicationVerifier
     private Action<Font, string> writeToListBox;
     public void Initialize(Action<Font, string> writeToListBox)
     {
+      this.labelDataBits.Text = "7";
+      this.labelParity.Text = "Odd";
+      this.labelStopBits.Text = "1"; 
+
       this.writeToListBox = writeToListBox; 
 
       object[] baudRates = { 115200, 57600, 56000, 38400, 28800, 19200, 14400, 9600, 4800, 2400, 1200, 600, 300, 110 };
@@ -50,7 +54,6 @@ namespace SerialCommunicationVerifier
 
       Properties.Settings.Default.ActiveRadioButton = "Serial";
       Properties.Settings.Default.Save();
-
     }
 
     private void StopReading()

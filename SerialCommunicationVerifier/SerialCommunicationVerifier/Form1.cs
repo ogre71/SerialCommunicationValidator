@@ -48,7 +48,7 @@ namespace SerialCommunicationVerifier
 
     private void buttonSend_Click(object sender, EventArgs e)
     {
-      this.write(this.textBoxInput.Text + 'r');
+      this.write(this.textBoxInput.Text + "\r\n");
 
       Font font = new System.Drawing.Font("System", 10, FontStyle.Italic);
       ListViewItem listViewItem = this.listView1.Items.Add(new ListViewItem(new string[] { this.textBoxInput.Text }, 0, System.Drawing.Color.Black, System.Drawing.Color.White, font));

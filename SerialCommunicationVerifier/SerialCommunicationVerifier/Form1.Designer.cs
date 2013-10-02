@@ -78,9 +78,9 @@
             this.columnHeader1});
       this.listView1.ContextMenuStrip = this.contextMenuStrip1;
       this.listView1.FullRowSelect = true;
-      this.listView1.Location = new System.Drawing.Point(15, 243);
+      this.listView1.Location = new System.Drawing.Point(15, 118);
       this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(718, 158);
+      this.listView1.Size = new System.Drawing.Size(718, 283);
       this.listView1.TabIndex = 15;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
@@ -135,12 +135,11 @@
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Location = new System.Drawing.Point(15, 65);
+      this.groupBox1.Location = new System.Drawing.Point(93, 12);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(718, 100);
+      this.groupBox1.Size = new System.Drawing.Size(640, 100);
       this.groupBox1.TabIndex = 19;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "groupBox1";
       // 
       // radioButtonSerial
       // 
