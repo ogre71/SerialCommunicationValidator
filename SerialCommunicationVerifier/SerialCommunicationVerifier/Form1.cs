@@ -21,10 +21,6 @@ namespace SerialCommunicationVerifier
       InitializeComponent();
     }
 
-
-
-
-
     private void Form1_Load(object sender, EventArgs e)
     {
       if (Properties.Settings.Default.ActiveRadioButton == "Serial")
@@ -54,20 +50,10 @@ namespace SerialCommunicationVerifier
       ListViewItem listViewItem = this.listView1.Items.Add(new ListViewItem(new string[] { this.textBoxInput.Text }, 0, System.Drawing.Color.Black, System.Drawing.Color.White, font));
       listViewItem.EnsureVisible();
       this.textBoxInput.Clear(); 
-
-      return; 
-      
-
-
     }
 
     private Stack<string> keyLog = new Stack<string>();
     private int stackIndex = 0; 
-
-    private void textBoxInput_KeyPress(object sender, KeyPressEventArgs e)
-    {
-
-    }
 
     private void buttonId_Click(object sender, EventArgs e)
     {
@@ -101,44 +87,60 @@ namespace SerialCommunicationVerifier
 
       if (this.radioButtonSerial.Checked == true)
       {
-        this.groupBox1.Controls.Clear();
-
-        SerialCommunicationUserControl uc = new SerialCommunicationUserControl();
-        this.groupBox1.Controls.Add(uc);
-        uc.Dock = DockStyle.Fill;
-        uc.Show();
-        uc.Initialize(InvokeToDrawInListView);
-        this.write = uc.Write;
+        SerialCommunicationUserControl uc = new SerialCommunicationUserControl(this.WriteToListView, this.OnConnected, this.OnDisconnected);
+        SwapUserControl(uc); 
       }
       else
       {
-        if (this.groupBox1.Controls.Count > 0 && this.groupBox1.Controls[0] is SerialCommunicationUserControl)
-        {
-          SerialCommunicationUserControl sccuc = (SerialCommunicationUserControl)this.groupBox1.Controls[0];
-          sccuc.Dispose(); 
-        }
-
-        this.groupBox1.Controls.Clear();
-
-        TcpIpCommunicationUserControl uc = new TcpIpCommunicationUserControl();
-        this.groupBox1.Controls.Add(uc);
-        uc.Dock = DockStyle.Fill;
-        uc.Show();
-        uc.Initialize(InvokeToDrawInListView);
-        this.write = uc.Write; 
+        TcpIpCommunicationUserControl uc = new TcpIpCommunicationUserControl(this.WriteToListView, this.OnConnected, this.OnDisconnected);
+        this.SwapUserControl(uc); 
       }
     }
 
-    private void InvokeToDrawInListView(Font font, string text)
+    private void SwapUserControl(CommunicationUserControl newUserControl)
+    {
+      if (this.groupBox1.Controls.Count > 0)
+      { 
+        CommunicationUserControl currentUserControl = (CommunicationUserControl) this.groupBox1.Controls[0];
+        currentUserControl.Close(); 
+
+        this.groupBox1.Controls.Clear();
+      }
+
+      this.OnDisconnected(); 
+
+      this.groupBox1.Controls.Add(newUserControl);
+      newUserControl.Dock = DockStyle.Fill;
+      newUserControl.Show();
+      this.write = newUserControl.Write;
+    }
+
+    private void WriteToListView(Font font, string text)
     {
       if (this.InvokeRequired)
       {
-        this.Invoke(new Action(() => { this.InvokeToDrawInListView(font, text); }));
+        this.Invoke(new Action(() => { this.WriteToListView(font, text); }));
         return; 
       }
 
       ListViewItem listViewItem = this.listView1.Items.Add(new ListViewItem(new string[] { text }, 0, System.Drawing.Color.Black, System.Drawing.Color.White, font));
       listViewItem.EnsureVisible();
+    }
+
+    private void OnConnected()
+    {
+      this.textBoxInput.Enabled = true;
+      this.buttonSend.Enabled = true;
+      this.buttonId.Enabled = true;
+
+      this.textBoxInput.Focus(); 
+    }
+
+    private void OnDisconnected()
+    {
+      this.textBoxInput.Enabled = false;
+      this.buttonSend.Enabled = false;
+      this.buttonId.Enabled = false; 
     }
 
     private void textBoxInput_KeyUp(object sender, KeyEventArgs e)

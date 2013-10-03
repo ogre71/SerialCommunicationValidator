@@ -14,34 +14,31 @@ using System.IO;
 
 namespace SerialCommunicationVerifier
 {
-  public partial class SerialCommunicationUserControl : UserControl
+
+  public partial class SerialCommunicationUserControl : CommunicationUserControl
   {
-    public SerialCommunicationUserControl()
+    private string serialPortName = string.Empty;
+
+    private bool stopSerialPortRead = true;
+    //private bool serialPortStopped = true;
+    private ManualResetEvent serialPortReadSleep = new ManualResetEvent(false);
+    private ManualResetEvent serialPortReadSleeped = new ManualResetEvent(false);
+    private SerialPort serialPort;
+
+
+    public SerialCommunicationUserControl() : base(null, null, null)
     {
       InitializeComponent();
     }
 
-    public void Dispose()
+    public SerialCommunicationUserControl(Action<Font, string> writeToListBox, Action onConnected, Action onDisconnected) : base(writeToListBox, onConnected, onDisconnected)
     {
-      if (this.serialPort != null && this.serialPort.IsOpen)
-      {
-        this.serialPort.Close();
-        this.stopSerialPortRead = true; 
-      }
-
-      this.Dispose(true); 
-    }
-
-    private string serialPortName = string.Empty;
-
-    private Action<Font, string> writeToListBox;
-    public void Initialize(Action<Font, string> writeToListBox)
-    {
+      InitializeComponent();
       this.labelDataBits.Text = "7";
       this.labelParity.Text = "Odd";
-      this.labelStopBits.Text = "1"; 
+      this.labelStopBits.Text = "1";
 
-      this.writeToListBox = writeToListBox; 
+      base.writeToListBox = writeToListBox;
 
       object[] baudRates = { 115200, 57600, 56000, 38400, 28800, 19200, 14400, 9600, 4800, 2400, 1200, 600, 300, 110 };
       this.comboBoxBaudRate.Items.AddRange(baudRates);
@@ -54,8 +51,9 @@ namespace SerialCommunicationVerifier
 
       Properties.Settings.Default.ActiveRadioButton = "Serial";
       Properties.Settings.Default.Save();
-    }
 
+    }
+    
     private void StopReading()
     {
       if (serialPort.IsOpen)
@@ -68,15 +66,10 @@ namespace SerialCommunicationVerifier
       serialPortReadSleeped.WaitOne(TimeSpan.FromMilliseconds(300));
     }
 
-    private bool stopSerialPortRead = true;
-    private bool serialPortStopped = true;
-    private ManualResetEvent serialPortReadSleep = new ManualResetEvent(false);
-    private ManualResetEvent serialPortReadSleeped = new ManualResetEvent(false);
-
     private void ReadSerialPort(object uselessState)
     {
       stopSerialPortRead = false;
-      serialPortStopped = false;
+      //serialPortStopped = false;
       serialPortReadSleep.Reset();
 
       while (!stopSerialPortRead)
@@ -118,50 +111,13 @@ namespace SerialCommunicationVerifier
 
         bool dataRead = serialPortReadSleep.WaitOne(300);
       }
-      serialPortStopped = true;
+      //serialPortStopped = true;
     }
 
     private void comboBoxSerialPorts_SelectedIndexChanged(object sender, EventArgs e)
     {
-      Debug.WriteLine(this.comboBoxSerialPorts.SelectedItem);
 
-      if (this.comboBoxSerialPorts.SelectedItem.ToString() == "Refresh")
-      {
-        QuerySerialPorts();
-        return;
-      }
-
-      if (serialPort != null)
-      {
-        StopReading();
-      }
-
-      serialPortName = this.comboBoxSerialPorts.SelectedItem.ToString();
-      int baudRate = (int)this.comboBoxBaudRate.SelectedItem;
-      serialPort = new System.IO.Ports.SerialPort(serialPortName, baudRate, System.IO.Ports.Parity.Odd, 7, System.IO.Ports.StopBits.One);
-      serialPort.Handshake = Handshake.None;
-      //serialPort = new System.IO.Ports.SerialPort(serialPortName, 9600, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
-
-      //serialPort.ReadTimeout = 200;
-      try
-      {
-        serialPort.Open();
-      }
-      catch (IOException iex)
-      {
-        MessageBox.Show("Error opening port: " + serialPortName);
-        return;
-      }
-      catch (UnauthorizedAccessException uaex)
-      {
-        MessageBox.Show("Error opening port: " + serialPortName);
-        return;
-      }
-
-      System.Threading.ThreadPool.QueueUserWorkItem(ReadSerialPort, null);
     }
-    private SerialPort serialPort;
-    //private int baudRate = 9600;
 
     private void comboBoxBaudRate_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -211,7 +167,7 @@ namespace SerialCommunicationVerifier
       this.QuerySerialPorts();
     }
 
-    public void Write(string input)
+    public override void Write(string input)
     {
       try
       {
@@ -229,7 +185,75 @@ namespace SerialCommunicationVerifier
         //this.QuerySerialPorts();
         return;
       }
-
     }
+
+    public override void Close()
+    {
+      if (this.serialPort != null && this.serialPort.IsOpen)
+      {
+        this.serialPort.Close();
+        this.stopSerialPortRead = true;
+      }
+
+      this.Dispose(true);
+    }
+
+    private void buttonDone_Click(object sender, EventArgs e)
+    {
+      if (this.buttonDone.Text == "&Connect")
+      {
+        Debug.WriteLine(this.comboBoxSerialPorts.SelectedItem);
+
+        if (this.comboBoxSerialPorts.SelectedItem.ToString() == "Refresh")
+        {
+          QuerySerialPorts();
+          return;
+        }
+
+        if (serialPort != null)
+        {
+          StopReading();
+        }
+
+        serialPortName = this.comboBoxSerialPorts.SelectedItem.ToString();
+        int baudRate = (int)this.comboBoxBaudRate.SelectedItem;
+        serialPort = new System.IO.Ports.SerialPort(serialPortName, baudRate, System.IO.Ports.Parity.Odd, 7, System.IO.Ports.StopBits.One);
+        serialPort.Handshake = Handshake.None;
+
+        //serialPort = new System.IO.Ports.SerialPort(serialPortName, 9600, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
+        //serialPort.ReadTimeout = 200;
+
+        try
+        {
+          serialPort.Open();
+        }
+        catch (IOException iex)
+        {
+          MessageBox.Show("Error opening port: " + serialPortName);
+          return;
+        }
+        catch (UnauthorizedAccessException uaex)
+        {
+          MessageBox.Show("Error opening port: " + serialPortName);
+          return;
+        }
+
+        System.Threading.ThreadPool.QueueUserWorkItem(ReadSerialPort, null);
+        this.buttonDone.Text = "&Close";
+        this.onConnected(); 
+      }
+      else
+      {
+        if (this.serialPort != null)
+        {
+          this.StopReading();
+          this.serialPort.Close();
+        }
+
+        this.buttonDone.Text = "&Connect";
+        this.onDisconnected(); 
+      }
+    }
+
   }
 }

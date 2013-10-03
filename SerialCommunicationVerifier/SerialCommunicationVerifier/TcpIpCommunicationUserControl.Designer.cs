@@ -28,21 +28,22 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.textBox1 = new System.Windows.Forms.TextBox();
+      this.textBoxInstrumentAddress = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.buttonDone = new System.Windows.Forms.Button();
+      this.labelPort = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
-      // textBox1
+      // textBoxInstrumentAddress
       // 
-      this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.textBoxInstrumentAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBox1.Location = new System.Drawing.Point(7, 20);
-      this.textBox1.Name = "textBox1";
-      this.textBox1.Size = new System.Drawing.Size(479, 20);
-      this.textBox1.TabIndex = 0;
-      this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-      this.textBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyUp);
+      this.textBoxInstrumentAddress.Location = new System.Drawing.Point(7, 20);
+      this.textBoxInstrumentAddress.Name = "textBoxInstrumentAddress";
+      this.textBoxInstrumentAddress.Size = new System.Drawing.Size(479, 20);
+      this.textBoxInstrumentAddress.TabIndex = 0;
+      this.textBoxInstrumentAddress.TextChanged += new System.EventHandler(this.textBoxInstrumentAddress_TextChanged);
+      this.textBoxInstrumentAddress.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxInstrumentAddress_KeyUp);
       // 
       // label1
       // 
@@ -60,17 +61,27 @@
       this.buttonDone.Name = "buttonDone";
       this.buttonDone.Size = new System.Drawing.Size(75, 23);
       this.buttonDone.TabIndex = 2;
-      this.buttonDone.Text = "&Done";
+      this.buttonDone.Text = "&Connect";
       this.buttonDone.UseVisualStyleBackColor = true;
       this.buttonDone.Click += new System.EventHandler(this.buttonDone_Click);
+      // 
+      // labelPort
+      // 
+      this.labelPort.AutoSize = true;
+      this.labelPort.Location = new System.Drawing.Point(4, 43);
+      this.labelPort.Name = "labelPort";
+      this.labelPort.Size = new System.Drawing.Size(56, 13);
+      this.labelPort.TabIndex = 3;
+      this.labelPort.Text = "Port: 7777";
       // 
       // TcpIpCommunicationUserControl
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.labelPort);
       this.Controls.Add(this.buttonDone);
       this.Controls.Add(this.label1);
-      this.Controls.Add(this.textBox1);
+      this.Controls.Add(this.textBoxInstrumentAddress);
       this.Name = "TcpIpCommunicationUserControl";
       this.Size = new System.Drawing.Size(489, 114);
       this.ResumeLayout(false);
@@ -80,8 +91,9 @@
 
     #endregion
 
-    private System.Windows.Forms.TextBox textBox1;
+    private System.Windows.Forms.TextBox textBoxInstrumentAddress;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Button buttonDone;
+    private System.Windows.Forms.Label labelPort;
   }
 }

@@ -54,7 +54,6 @@
       this.textBoxInput.Name = "textBoxInput";
       this.textBoxInput.Size = new System.Drawing.Size(637, 20);
       this.textBoxInput.TabIndex = 1;
-      this.textBoxInput.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxInput_KeyPress);
       this.textBoxInput.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxInput_KeyUp);
       // 
       // buttonSend
@@ -180,7 +179,7 @@
       this.MainMenuStrip = this.menuStrip1;
       this.MinimumSize = new System.Drawing.Size(744, 461);
       this.Name = "Form1";
-      this.Text = "Serial Communication Utility";
+      this.Text = "Lake Shore Instrument Communication Utility version 0.1";
       this.Load += new System.EventHandler(this.Form1_Load);
       this.Resize += new System.EventHandler(this.Form1_Resize);
       this.contextMenuStrip1.ResumeLayout(false);

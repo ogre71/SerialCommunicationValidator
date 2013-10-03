@@ -44,6 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommunicationUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CommunicationUserControl.Designer.cs">
+      <DependentUpon>CommunicationUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
