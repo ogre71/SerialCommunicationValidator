@@ -108,6 +108,7 @@
       // 
       // comboBoxSerialPorts
       // 
+      this.comboBoxSerialPorts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSerialPorts.FormattingEnabled = true;
       this.comboBoxSerialPorts.Location = new System.Drawing.Point(6, 16);
       this.comboBoxSerialPorts.Name = "comboBoxSerialPorts";

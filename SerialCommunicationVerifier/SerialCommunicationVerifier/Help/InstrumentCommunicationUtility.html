@@ -1,0 +1,258 @@
+﻿
+<html>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=WordSection1>
+
+<p class=MsoNormal><span style='font-size:36.0pt;font-family:"Calibri","sans-serif";
+mso-fareast-font-family:"Times New Roman"'>Chart Recorder - Getting Started</span><span
+style='font-size:13.5pt;font-family:"Calibri","sans-serif";mso-fareast-font-family:
+"Times New Roman"'><br>
+This document describes the basic usage of the Lake Shore Instrument Communication Utility. Instrument Communication Utility was designed to provide basic serial or TCP/IP communications functionality. This software has been provided free of charge by Lake
+Shore <span class=SpellE>Cryotronics</span> Inc. in hopes that it will add
+value to our&nbsp;instrument products, providing customers with an
+off-the-shelf tool for communication.</span><span style='font-size:13.5pt;mso-fareast-font-family:"Times New Roman"'><br>
+</span><span
+style='mso-fareast-font-family:"Times New Roman"'><br>
+<br>
+</span><b><span style='font-size:18.0pt;font-family:"Calibri","sans-serif";
+mso-fareast-font-family:"Times New Roman"'>1. Selecting TCP/IP or Serial </span></b><span
+style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'><br>
+The configuration panel is located to the right of the chart and consists of
+items #12 through #17 in the screenshot above. It is used to configure the
+charting and logging functionality for the next data acquisition task. When the
+&quot;Start&quot; button is pressed, the parameters in the configuration panel
+are used to determine:</span><span style='mso-fareast-font-family:"Times New Roman"'><o:p></o:p></span></p>
+
+<ul type=disc>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l1 level1 lfo1;tab-stops:list .5in'><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Sample
+     Period (#13) - The rate at which to acquire readings from the instrument
+     in milliseconds.<o:p></o:p></span></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l1 level1 lfo1;tab-stops:list .5in'><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Number
+     of Data Points to Log (#14) - The number of data points to log if logging
+     to a file.<o:p></o:p></span></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l1 level1 lfo1;tab-stops:list .5in'><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Log File
+     (#15) - The path of the file to use for logging data, if logging to a
+     file.<o:p></o:p></span></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l1 level1 lfo1;tab-stops:list .5in'><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Chart
+     Only (#16) - If selected, acquired data is only charted, and is not logged
+     to a file.<o:p></o:p></span></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l1 level1 lfo1;tab-stops:list .5in'><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Readings
+     (#17) - The readings, and units (where applicable) to take during data
+     acquisition.<o:p></o:p></span></li>
+</ul>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif";mso-fareast-font-family:
+"Times New Roman"'>The configuration panel can be collapsed to increase the
+size of the chart. To collapse the configuration panel, simply click on the
+&quot;Collapse Configuration Panel&quot; button (#12). When collapsed, the same
+button becomes an &quot;Expand Configuration Panel&quot; button that can be
+used to restore the configuration panel on the form. When data acquisition is
+in progress, the configuration panel controls are disabled, but the current
+settings can still be seen.<br>
+<br>
+</span><b><span style='font-size:18.0pt;font-family:"Calibri","sans-serif";
+mso-fareast-font-family:"Times New Roman"'>2. Starting Data Acquisition</span></b><span
+style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'><br>
+<span class=GramE>Once</span> the parameters in the configuration panel are set
+as desired, simply click the &quot;Start&quot; button to begin data
+acquisition. If logging data to a file, the Number of Data Points to Log
+parameter is used to determine how many data points to take before terminating
+data acquisition. However, once data acquisition has begun, the
+&quot;Start&quot; button becomes a &quot;Stop&quot; button, and data
+acquisition can be terminated by pressing the &quot;Stop&quot; button. If not
+logging to a file, data acquisition will continue until the &quot;Stop&quot;
+button is pressed.<br>
+<br>
+</span><b><span style='font-size:18.0pt;font-family:"Calibri","sans-serif";
+mso-fareast-font-family:"Times New Roman"'>3. Chart Functionality</span></b><span
+style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'><br>
+<span class=GramE>By</span> default, the chart (#6), will <span class=SpellE>autoscale</span>
+in both the x and y-axis. The time scale slider (#7) is pro-vided to adjust the
+time scale window (x-axis scaling). When less than one hour of data has been
+logged, the slider will allow a time window between 1 and 60 minutes, in
+increments of 1 minute. As the total elapsed time increases, the values on the
+time scale slider will also increase to allow time windows proportional to the
+elapsed time. A y-axis is added for each unique measurement unit of the
+selected readings. Each y-axis will be <span class=SpellE>autoscaled</span>, so
+if more than one reading is being taken in the same unit, the scale for the
+associated axis will be set such that the largest values of all readings are at
+the extremes. Data that is charted on the same axis, but that is far apart in
+magnitude will result in low resolution for each data series.<br>
+<br>
+Manual zooming of the chart can be achieved either by using the mouse wheel, or
+by clicking and dragging a box around the area of the chart to zoom to. Manual
+panning can be achieved by holding the Ctrl key, then clicking and dragging the
+chart. After manually zooming or panning, <span class=SpellE>autoscaling</span>
+in both axes is turned off and the &quot;Reset Zoom/Pan&quot; button becomes
+active. To return to <span class=SpellE>autoscale</span> mode, click the
+&quot;Reset Zoom/Pan&quot; button.<br>
+<br>
+A screenshot of the currently displayed chart can be copied to the clipboard,
+saved in the PNG image format, or printed directly to a printer using context
+menu that appears when right-clicking on the chart. Other chart properties,
+such as colors and fonts can be customized through this context menu by
+clicking &quot;Properties...<span class=GramE>&quot;.</span> Note that changes
+to these chart properties are not saved when the application is closed, so the
+default values will be restored when re-opening the Chart Recorder utility.<br>
+<br>
+</span><b><span style='font-size:18.0pt;font-family:"Calibri","sans-serif";
+mso-fareast-font-family:"Times New Roman"'>4. Utilities<br>
+</span></b><span class=GramE><span style='font-family:"Calibri","sans-serif";
+mso-fareast-font-family:"Times New Roman"'>The</span></span><span
+style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>
+utilities panel (#11) provides added functionality to assist the user in
+various common tasks associated with user applications. Three tabs provide a
+means of selecting between the three utilities.</span><span style='mso-fareast-font-family:
+"Times New Roman"'><o:p></o:p></span></p>
+
+<ul type=disc>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo2;tab-stops:list .5in'><b><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Command
+     Line</span></b><span style='font-family:"Calibri","sans-serif";mso-fareast-font-family:
+     "Times New Roman"'> - Provides command line access for sending commands
+     and queries to the instrument. To send a command or query type the command
+     or query into the &quot;Command&quot; text box and click the
+     &quot;Send&quot; button. Query responses are displayed in the
+     &quot;Response&quot; box below. Click &quot;Command Summary&quot; to pull
+     up the list of command line commands and queries supported by the
+     instrument.<o:p></o:p></span></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo2;tab-stops:list .5in'><b><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Notes</span></b><span
+     style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>
+     - Provides a means of adding notes to the log file while logging data. The
+     note will be added to the &quot;Notes&quot; column of the log file at the
+     row associated with the most recently acquired data point. To add a note,
+     simply add text to the text box next to the &quot;Save Note&quot; button, <span
+     class=GramE>then</span> click &quot;Save Note&quot;. Notes will be
+     appended to the note history text box, along with a time stamp. If a note
+     is saved while not currently logging data to a file, the note will only
+     appear in the note history text box, and will only be available while the
+     application is running.<o:p></o:p></span></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo2;tab-stops:list .5in'><b><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Control</span></b><span
+     style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>
+     - Provides easy access to the control functions of the instrument. The P,
+     I, D, Manual Output, Setpoint, and Heater Range settings can be configured
+     here for each control loop on the instrument. The current configuration of
+     the given control loop is displayed when the &quot;Loop&quot; radio button
+     is selected. To update these parameters on the instrument, first select
+     the loop to update by choosing a &quot;Loop&quot; radio button. Then
+     update the values in the Control panel and click the &quot;Send&quot;
+     button. Each control loop must be updated independently, so once the
+     values in the Control panel are updated, click the &quot;Send&quot; button
+     before clicking another &quot;Loop&quot; radio button.<o:p></o:p></span></li>
+</ul>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif";mso-fareast-font-family:
+"Times New Roman"'>The utilities panel can be collapsed to increase the size of
+the chart. To collapse the utilities panel, click on the &quot;Collapse
+Utilities Panel&quot; button (#10). When collapsed, the same button becomes an
+&quot;Expand Utilities Panel&quot; button that can be used to restore the
+utilities panel on the form.<br>
+<br>
+</span><b><span style='font-size:18.0pt;font-family:"Calibri","sans-serif";
+mso-fareast-font-family:"Times New Roman"'>5. Menu</span></b><span
+style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'><br>
+The standard dropdown menu includes the following sections:</span><span
+style='mso-fareast-font-family:"Times New Roman"'><o:p></o:p></span></p>
+
+<ul type=disc>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l3 level1 lfo3;tab-stops:list .5in'><b><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>File
+     (#1)<o:p></o:p></span></b></li>
+ <ul type=circle>
+  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l3 level2 lfo3;tab-stops:list 1.0in'><b><span
+      style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Interface
+      Configuration</span></b><span style='font-family:"Calibri","sans-serif";
+      mso-fareast-font-family:"Times New Roman"'> - Can be used to configure
+      the remote interface connection to the instrument.<o:p></o:p></span></li>
+  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l3 level2 lfo3;tab-stops:list 1.0in'><b><span
+      style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Exit</span></b><span
+      style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>
+      - Closes the Chart Recorder application.<o:p></o:p></span></li>
+ </ul>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l3 level1 lfo3;tab-stops:list .5in'><b><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Log/Chart
+     (#2)<o:p></o:p></span></b></li>
+ <ul type=circle>
+  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l3 level2 lfo3;tab-stops:list 1.0in'><b><span
+      style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Configure
+      Log/Chart</span></b><span style='font-family:"Calibri","sans-serif";
+      mso-fareast-font-family:"Times New Roman"'> - Simply expands the
+      configuration panel if collapsed.<o:p></o:p></span></li>
+  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l3 level2 lfo3;tab-stops:list 1.0in'><b><span
+      style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Hide
+      Legend</span></b><span style='font-family:"Calibri","sans-serif";
+      mso-fareast-font-family:"Times New Roman"'> - Hides the legend in the
+      chart to expand the data plot.<o:p></o:p></span></li>
+ </ul>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l3 level1 lfo3;tab-stops:list .5in'><b><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Help
+     (#3)</span></b><span style='font-family:"Calibri","sans-serif";mso-fareast-font-family:
+     "Times New Roman"'><o:p></o:p></span></li>
+ <ul type=circle>
+  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l3 level2 lfo3;tab-stops:list 1.0in'><b><span
+      style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Getting
+      Started</span></b><span style='font-family:"Calibri","sans-serif";
+      mso-fareast-font-family:"Times New Roman"'> - Launches this web page for
+      basic Chart Recorder instructions.<o:p></o:p></span></li>
+  <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l3 level2 lfo3;tab-stops:list 1.0in'><b><span
+      style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>About</span></b><span
+      style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>
+      - Provides information about the application, including the software
+      revision level.<o:p></o:p></span></li>
+ </ul>
+</ul>
+
+<p class=MsoNormal><b><span style='font-size:18.0pt;font-family:"Calibri","sans-serif";
+mso-fareast-font-family:"Times New Roman"'>6. Information<br>
+</span></b><span style='font-family:"Calibri","sans-serif";mso-fareast-font-family:
+"Times New Roman"'>The information panel consists of the following two bits of
+information:</span><span style='mso-fareast-font-family:"Times New Roman"'><o:p></o:p></span></p>
+
+<ul type=disc>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l2 level1 lfo4;tab-stops:list .5in'><span class=SpellE><b><span
+     style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Datapoint</span></b></span><b><span
+     style='font-family:"Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>
+     (#4)</span></b><span style='font-family:"Calibri","sans-serif";mso-fareast-font-family:
+     "Times New Roman"'> - The current <span class=SpellE>datapoint</span>
+     number. If logging data, this also shows the total number of data points
+     to be taken in the current data acquisition (i.e. 522 of 1000).<o:p></o:p></span></li>
+ <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l2 level1 lfo4;tab-stops:list .5in'><b><span style='font-family:
+     "Calibri","sans-serif";mso-fareast-font-family:"Times New Roman"'>Log File
+     (#5)</span></b><span style='font-family:"Calibri","sans-serif";mso-fareast-font-family:
+     "Times New Roman"'> - The file path of the file that is currently being
+     used to log data.<o:p></o:p></span></li>
+</ul>
+
+</div>
+
+</body>
+
+</html>

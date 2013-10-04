@@ -56,9 +56,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SerialCommunicationVerifier\SerialCommunicationVerifier.csproj">
+    <ProjectReference Include="..\SerialCommunicationVerifier\InstrumentCommunicationUtility.csproj">
       <Project>{6b921c24-3c59-4b02-8476-639972d3fe91}</Project>
-      <Name>SerialCommunicationVerifier</Name>
+      <Name>InstrumentCommunicationUtility</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
