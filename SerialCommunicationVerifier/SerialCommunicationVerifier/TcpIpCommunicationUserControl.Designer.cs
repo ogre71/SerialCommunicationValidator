@@ -91,7 +91,7 @@
 
     #endregion
 
-    private System.Windows.Forms.TextBox textBoxInstrumentAddress;
+    internal System.Windows.Forms.TextBox textBoxInstrumentAddress;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Button buttonDone;
     private System.Windows.Forms.Label labelPort;

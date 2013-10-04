@@ -44,7 +44,7 @@
       // 
       // buttonRefreshComPorts
       // 
-      this.buttonRefreshComPorts.Location = new System.Drawing.Point(6, 16);
+      this.buttonRefreshComPorts.Location = new System.Drawing.Point(6, 43);
       this.buttonRefreshComPorts.Name = "buttonRefreshComPorts";
       this.buttonRefreshComPorts.Size = new System.Drawing.Size(121, 23);
       this.buttonRefreshComPorts.TabIndex = 25;
@@ -113,7 +113,6 @@
       this.comboBoxSerialPorts.Name = "comboBoxSerialPorts";
       this.comboBoxSerialPorts.Size = new System.Drawing.Size(121, 21);
       this.comboBoxSerialPorts.TabIndex = 15;
-      this.comboBoxSerialPorts.SelectedIndexChanged += new System.EventHandler(this.comboBoxSerialPorts_SelectedIndexChanged);
       // 
       // buttonDone
       // 

@@ -17,15 +17,71 @@ namespace SerialCommunicationVerifier
 
   public partial class SerialCommunicationUserControl : CommunicationUserControl
   {
+    internal interface ISerialPort
+    {
+      void Write(string message);
+      int BytesToRead { get;  }
+      bool IsOpen { get;  }
+      void Close();
+      int ReadByte();
+      void Open(); 
+    }
+
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    private class RealSerialPort : ISerialPort
+    {
+      private SerialPort serialPort; 
+      public RealSerialPort(SerialPort serialPort)
+      {
+        this.serialPort = serialPort; 
+      }
+
+      public void Write(string message)
+      {
+        this.serialPort.Write(message); 
+      }
+
+      public int BytesToRead
+      {
+        get 
+        {
+          return this.serialPort.BytesToRead;
+        }
+      }
+
+      public bool IsOpen
+      {
+        get
+        {
+          return this.serialPort.IsOpen;
+        }
+      }
+
+      public void Close()
+      {
+        this.serialPort.Close(); 
+      }
+
+      public int ReadByte()
+      {
+        return this.serialPort.ReadByte(); 
+      }
+
+      public void Open()
+      {
+        this.serialPort.Open(); 
+      }
+    }
+
     private string serialPortName = string.Empty;
 
     private bool stopSerialPortRead = true;
-    //private bool serialPortStopped = true;
     private ManualResetEvent serialPortReadSleep = new ManualResetEvent(false);
     private ManualResetEvent serialPortReadSleeped = new ManualResetEvent(false);
-    private SerialPort serialPort;
 
+    private ISerialPort serialPort;
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public SerialCommunicationUserControl() : base(null, null, null)
     {
       InitializeComponent();
@@ -44,16 +100,18 @@ namespace SerialCommunicationVerifier
       this.comboBoxBaudRate.Items.AddRange(baudRates);
       this.comboBoxBaudRate.SelectedItem = 57600;
 
-      if (this.DesignMode == true)
-        return;
-
-      QuerySerialPorts();
+      this.QuerySerialPorts();
 
       Properties.Settings.Default.ActiveRadioButton = "Serial";
       Properties.Settings.Default.Save();
-
     }
-    
+
+    internal SerialCommunicationUserControl(Action<Font, string> writeToListBox, Action onConnected, Action onDisconnected, ISerialPort serialPort)
+      : this(writeToListBox, onConnected, onDisconnected)
+    {
+      this.serialPort = serialPort; 
+    }
+
     private void StopReading()
     {
       if (serialPort.IsOpen)
@@ -69,7 +127,6 @@ namespace SerialCommunicationVerifier
     private void ReadSerialPort(object uselessState)
     {
       stopSerialPortRead = false;
-      //serialPortStopped = false;
       serialPortReadSleep.Reset();
 
       while (!stopSerialPortRead)
@@ -91,42 +148,41 @@ namespace SerialCommunicationVerifier
         }
         catch (IOException)
         {
-          MessageBox.Show("Read IO Error");
-          this.Invoke(new Action(() => { this.QuerySerialPorts(); }));
+          //MessageBox.Show("Read IO Error");
+          resetBecauseOfError(); 
           return;
           //Do some more nothing
         }
         catch (InvalidOperationException)
         {
-          MessageBox.Show("Invalid Read");
-          this.Invoke(new Action(() => { this.QuerySerialPorts(); }));
+          //MessageBox.Show("Invalid Read");
+          resetBecauseOfError(); 
           return;
         }
 
         if (text != string.Empty)
         {
 
-          this.Invoke(new Action(() => { writeToListBox(new Font("System", 10), text); }));
+          this.Invoke(new Action<Font, string>(this.writeToListBox), new Font("System", 10), text);
         }
 
         bool dataRead = serialPortReadSleep.WaitOne(300);
       }
-      //serialPortStopped = true;
     }
 
-    private void comboBoxSerialPorts_SelectedIndexChanged(object sender, EventArgs e)
+    internal void resetBecauseOfError()
     {
-
-    }
-
-    private void comboBoxBaudRate_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      if (this.serialPort == null)
+      if (this.InvokeRequired)
       {
-        return;
+        this.Invoke(new Action(this.resetBecauseOfError));
+        return; 
       }
 
-      this.comboBoxSerialPorts_SelectedIndexChanged(null, null);
+      this.onDisconnected();
+      this.QuerySerialPorts();
+      this.comboBoxSerialPorts.Enabled = true;
+      this.comboBoxBaudRate.Enabled = true;
+      this.buttonDone.Text = "&Connect"; 
     }
 
     private void QuerySerialPorts()
@@ -141,8 +197,9 @@ namespace SerialCommunicationVerifier
 
       if (portNames.Length == 0)
       {
-        MessageBox.Show("No serial ports found!");
-        this.buttonRefreshComPorts.Visible = true;
+        //MessageBox.Show("No serial ports found!");
+        //this.buttonRefreshComPorts.Visible = true;
+        this.buttonDone.Enabled = false; 
         return;
       }
 
@@ -154,17 +211,23 @@ namespace SerialCommunicationVerifier
       List<string> sortedPortNamesList = portNames.ToList();
       sortedPortNamesList.Sort();
       this.comboBoxSerialPorts.Items.AddRange(sortedPortNamesList.ToArray());
-      this.comboBoxSerialPorts.Items.Add("Refresh");
+      //this.comboBoxSerialPorts.Items.Add("Refresh");
       //this.textBoxInput.Enabled = true;
       this.comboBoxBaudRate.Enabled = true;
-      this.buttonRefreshComPorts.Visible = false;
+      //this.buttonRefreshComPorts.Visible = false;
+      this.buttonDone.Enabled = true; 
 
       this.comboBoxSerialPorts.SelectedIndex = 0;
     }
 
-    private void buttonRefreshComPorts_Click(object sender, EventArgs e)
+    internal void buttonRefreshComPorts_Click(object sender, EventArgs e)
     {
       this.QuerySerialPorts();
+      if (this.serialPort != null && this.serialPort.IsOpen)
+      {
+        this.comboBoxSerialPorts.Enabled = false;
+        this.comboBoxBaudRate.Enabled = false; 
+      }
     }
 
     public override void Write(string input)
@@ -173,16 +236,19 @@ namespace SerialCommunicationVerifier
       {
         this.serialPort.Write(input);
       }
-      catch (TimeoutException tex)
+      catch (TimeoutException)
       {
-        MessageBox.Show("Write timeout");
-        //this.QuerySerialPorts();
+        this.resetBecauseOfError();
         return;
       }
-      catch (IOException iex)
+      catch (InvalidOperationException)
       {
-        MessageBox.Show("IO Exception ");
-        //this.QuerySerialPorts();
+        this.resetBecauseOfError();
+        return; 
+      }
+      catch (IOException)
+      {
+        this.resetBecauseOfError();
         return;
       }
     }
@@ -198,48 +264,64 @@ namespace SerialCommunicationVerifier
       this.Dispose(true);
     }
 
-    private void buttonDone_Click(object sender, EventArgs e)
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    private ISerialPort GetSerialPort()
+    {
+      // If we're mocking the serial port... just leave it. 
+      if (this.serialPort != null && !(this.serialPort is RealSerialPort))
+      {
+        return this.serialPort; 
+      }
+
+      serialPortName = this.comboBoxSerialPorts.SelectedItem.ToString();
+      int baudRate = (int)this.comboBoxBaudRate.SelectedItem;
+      return new RealSerialPort(new System.IO.Ports.SerialPort(serialPortName, baudRate, System.IO.Ports.Parity.Odd, 7, System.IO.Ports.StopBits.One));
+    }
+
+    internal void buttonDone_Click(object sender, EventArgs e)
     {
       if (this.buttonDone.Text == "&Connect")
       {
         Debug.WriteLine(this.comboBoxSerialPorts.SelectedItem);
 
-        if (this.comboBoxSerialPorts.SelectedItem.ToString() == "Refresh")
-        {
-          QuerySerialPorts();
-          return;
-        }
+        //if (this.comboBoxSerialPorts.SelectedItem.ToString() == "Refresh")
+        //{
+        //  this.QuerySerialPorts();
+        //  return;
+        //}
 
         if (serialPort != null)
         {
           StopReading();
         }
 
-        serialPortName = this.comboBoxSerialPorts.SelectedItem.ToString();
-        int baudRate = (int)this.comboBoxBaudRate.SelectedItem;
-        serialPort = new System.IO.Ports.SerialPort(serialPortName, baudRate, System.IO.Ports.Parity.Odd, 7, System.IO.Ports.StopBits.One);
-        serialPort.Handshake = Handshake.None;
-
-        //serialPort = new System.IO.Ports.SerialPort(serialPortName, 9600, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
-        //serialPort.ReadTimeout = 200;
+        //serialPortName = this.comboBoxSerialPorts.SelectedItem.ToString();
+        //int baudRate = (int)this.comboBoxBaudRate.SelectedItem;
+        serialPort = GetSerialPort(); // new RealSerialPort(new System.IO.Ports.SerialPort(serialPortName, baudRate, System.IO.Ports.Parity.Odd, 7, System.IO.Ports.StopBits.One));
+        //serialPort.Handshake = Handshake.None;
 
         try
         {
           serialPort.Open();
         }
-        catch (IOException iex)
+        catch (IOException)
         {
           MessageBox.Show("Error opening port: " + serialPortName);
+          this.QuerySerialPorts(); 
           return;
         }
-        catch (UnauthorizedAccessException uaex)
+        catch (UnauthorizedAccessException)
         {
           MessageBox.Show("Error opening port: " + serialPortName);
+          this.QuerySerialPorts(); 
           return;
         }
 
         System.Threading.ThreadPool.QueueUserWorkItem(ReadSerialPort, null);
         this.buttonDone.Text = "&Close";
+        this.comboBoxBaudRate.Enabled = false;
+        this.comboBoxSerialPorts.Enabled = false; 
+
         this.onConnected(); 
       }
       else
@@ -251,6 +333,8 @@ namespace SerialCommunicationVerifier
         }
 
         this.buttonDone.Text = "&Connect";
+        this.comboBoxBaudRate.Enabled = true;
+        this.comboBoxSerialPorts.Enabled = true;
         this.onDisconnected(); 
       }
     }

@@ -30,7 +30,16 @@ namespace SerialCommunicationVerifier
       this.onDisconnected = onDisconnected;
     }
 
-    public virtual void Write(string message) { }
-    public virtual void Close() { }
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public virtual void Write(string message) 
+    {
+      throw new NotImplementedException(); 
+    }
+    
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    public virtual void Close() 
+    {
+      throw new NotImplementedException();  
+    }
   }
 }

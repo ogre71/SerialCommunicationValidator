@@ -192,10 +192,10 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBoxInput;
-        private System.Windows.Forms.Button buttonSend;
+        internal System.Windows.Forms.TextBox textBoxInput;
+        internal System.Windows.Forms.Button buttonSend;
         private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.Button buttonId;
+        internal System.Windows.Forms.Button buttonId;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;

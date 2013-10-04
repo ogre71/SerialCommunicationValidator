@@ -16,6 +16,10 @@ namespace SerialCommunicationVerifier
 {
   public partial class Form1 : Form
   {
+    private Stack<string> keyLog = new Stack<string>();
+    private int stackIndex = 0;
+    private Action<string> write; 
+
     public Form1()
     {
       InitializeComponent();
@@ -35,13 +39,6 @@ namespace SerialCommunicationVerifier
       ThreadPool.QueueUserWorkItem(new WaitCallback((object ob) => { this.radioButtonSerial_CheckedChanged(null, null); }));
     }
 
-    private void buttonRefreshComPorts_Click(object sender, EventArgs e)
-    {
-      //this.QuerySerialPorts();
-    }
-
-    private Action<string> write; 
-
     private void buttonSend_Click(object sender, EventArgs e)
     {
       this.write(this.textBoxInput.Text + "\r\n");
@@ -51,9 +48,6 @@ namespace SerialCommunicationVerifier
       listViewItem.EnsureVisible();
       this.textBoxInput.Clear(); 
     }
-
-    private Stack<string> keyLog = new Stack<string>();
-    private int stackIndex = 0; 
 
     private void buttonId_Click(object sender, EventArgs e)
     {
@@ -97,7 +91,7 @@ namespace SerialCommunicationVerifier
       }
     }
 
-    private void SwapUserControl(CommunicationUserControl newUserControl)
+    internal void SwapUserControl(CommunicationUserControl newUserControl)
     {
       if (this.groupBox1.Controls.Count > 0)
       { 
@@ -115,7 +109,7 @@ namespace SerialCommunicationVerifier
       this.write = newUserControl.Write;
     }
 
-    private void WriteToListView(Font font, string text)
+    internal void WriteToListView(Font font, string text)
     {
       if (this.InvokeRequired)
       {
@@ -127,7 +121,7 @@ namespace SerialCommunicationVerifier
       listViewItem.EnsureVisible();
     }
 
-    private void OnConnected()
+    internal void OnConnected()
     {
       this.textBoxInput.Enabled = true;
       this.buttonSend.Enabled = true;
@@ -136,8 +130,13 @@ namespace SerialCommunicationVerifier
       this.textBoxInput.Focus(); 
     }
 
-    private void OnDisconnected()
+    internal void OnDisconnected()
     {
+      if (this.InvokeRequired)
+      {
+        this.Invoke(new Action(OnDisconnected)); 
+        return; 
+      }
       this.textBoxInput.Enabled = false;
       this.buttonSend.Enabled = false;
       this.buttonId.Enabled = false; 
@@ -183,6 +182,16 @@ namespace SerialCommunicationVerifier
 
         textBoxInput.Text = keyLog.ElementAt(stackIndex);
       }
+    }
+
+    internal void TestFlipSerialRadioButtons()
+    {
+      this.radioButtonSerial.Checked = !this.radioButtonSerial.Checked;
+    }
+
+    internal void TestTextBoxInput(KeyEventArgs e)
+    {
+      this.textBoxInput_KeyUp(null, e); 
     }
   }
 }
