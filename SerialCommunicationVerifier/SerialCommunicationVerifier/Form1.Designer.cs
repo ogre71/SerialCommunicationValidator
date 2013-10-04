@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
       this.textBoxInput = new System.Windows.Forms.TextBox();
       this.buttonSend = new System.Windows.Forms.Button();
       this.listView1 = new System.Windows.Forms.ListView();
@@ -176,6 +177,7 @@
       this.Controls.Add(this.buttonSend);
       this.Controls.Add(this.textBoxInput);
       this.Controls.Add(this.menuStrip1);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MainMenuStrip = this.menuStrip1;
       this.MinimumSize = new System.Drawing.Size(744, 461);
       this.Name = "Form1";
