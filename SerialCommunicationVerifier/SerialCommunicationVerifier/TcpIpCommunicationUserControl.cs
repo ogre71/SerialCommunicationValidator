@@ -67,14 +67,15 @@ namespace SerialCommunicationVerifier
     }
 
     private ITcpClient tcpClient;
-    private byte[] buffer; 
-    
+    private byte[] buffer;
+    //private Button buttonDone; 
+
     public TcpIpCommunicationUserControl() : base(null, null, null)
     {
       this.InitializeComponent();
     }
 
-    public TcpIpCommunicationUserControl(Action<Font, string> writeToDisplay, Action onConnected, Action onDisconnected) : base(writeToDisplay, onConnected, onDisconnected)
+    public TcpIpCommunicationUserControl(Action<Font, string> writeToDisplay, Action onConnected, Action onDisconnected, Button buttonDone) : base(writeToDisplay, onConnected, onDisconnected)
     {
       this.InitializeComponent(); 
 
@@ -84,9 +85,9 @@ namespace SerialCommunicationVerifier
       Properties.Settings.Default.Save();
     }
     
-    internal TcpIpCommunicationUserControl(Action<Font, string> writeToDisplay, Action onConnected, Action onDisconnected, ITcpClient client) : this(writeToDisplay, onConnected, onDisconnected)
+    internal TcpIpCommunicationUserControl(Action<Font, string> writeToDisplay, Action onConnected, Action onDisconnected, Button buttonDone, ITcpClient client) : this(writeToDisplay, onConnected, onDisconnected, buttonDone)
     {
-      this.tcpClient = client; 
+      this.tcpClient = client;
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -103,9 +104,11 @@ namespace SerialCommunicationVerifier
       return tcpClient;
     }
 
-    internal void buttonDone_Click(object sender, EventArgs e)
+    private bool connected = false; 
+
+    internal override bool ToggleConnect()
     {
-      if (this.buttonDone.Text == "&Connect")
+      if (!this.connected)
       {
         try
         {
@@ -120,7 +123,7 @@ namespace SerialCommunicationVerifier
             {
               MessageBox.Show("Can't parse port");
               this.onDisconnected();
-              return; 
+              return false; 
             }
             string address = this.textBoxInstrumentAddress.Text.Substring(0, this.textBoxInstrumentAddress.Text.IndexOf(":"));
             tcpClient.Connect(address, port); 
@@ -134,7 +137,7 @@ namespace SerialCommunicationVerifier
         {
           MessageBox.Show("Error trying to communicate with " + this.textBoxInstrumentAddress.Text);
           this.onDisconnected(); 
-          return; 
+          return false; 
         }
 
         this.textBoxInstrumentAddress.Enabled = false; 
@@ -144,14 +147,16 @@ namespace SerialCommunicationVerifier
 
         tcpClient.GetStream().BeginRead(buffer, 0, 1024, callback, tcpClient);
 
+        this.connected = true; 
         this.onConnected();
-        this.buttonDone.Text = "&Close";
+        return true; 
       }
       else
       {
-        this.textBoxInstrumentAddress.Enabled = true; 
-        this.buttonDone.Text = "&Connect";
-        this.Close(); 
+        this.textBoxInstrumentAddress.Enabled = true;
+        this.connected = false; 
+        this.Close();
+        return false; 
       }
     }
 
@@ -180,7 +185,6 @@ namespace SerialCommunicationVerifier
         {
           //normal
           this.textBoxInstrumentAddress.Enabled = true;
-          this.buttonDone.Text = "&Connect";
           this.onDisconnected(); 
         }
       }
@@ -190,12 +194,13 @@ namespace SerialCommunicationVerifier
     {
       if (e.KeyData == Keys.Enter)
       {
-        buttonDone_Click(null, null);
-        if (this.buttonDone.Text == "&Connect")
+        bool connected = this.ToggleConnect(); 
+        //this.onConnected(); 
+        if (!connected)
         {
-          return; 
+          return;
         }
-        
+
         this.Write("*idn?");
         Properties.Settings.Default.DnsName = textBoxInstrumentAddress.Text;
         Properties.Settings.Default.Save();
@@ -218,6 +223,7 @@ namespace SerialCommunicationVerifier
 
       this.onDisconnected();
     }
+
 
     private void textBoxInstrumentAddress_TextChanged(object sender, EventArgs e)
     {

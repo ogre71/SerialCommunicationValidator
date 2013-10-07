@@ -78,6 +78,7 @@ namespace SerialCommunicationVerifier
     private bool stopSerialPortRead = true;
     private ManualResetEvent serialPortReadSleep = new ManualResetEvent(false);
     private ManualResetEvent serialPortReadSleeped = new ManualResetEvent(false);
+    //private Button buttonDone; 
 
     private ISerialPort serialPort;
 
@@ -87,27 +88,34 @@ namespace SerialCommunicationVerifier
       InitializeComponent();
     }
 
-    public SerialCommunicationUserControl(Action<Font, string> writeToListBox, Action onConnected, Action onDisconnected) : base(writeToListBox, onConnected, onDisconnected)
+    public SerialCommunicationUserControl(Action<Font, string> writeToListBox, Action onConnected, Action onDisconnected, Button buttonDone) : base(writeToListBox, onConnected, onDisconnected)
     {
       InitializeComponent();
-      this.labelDataBits.Text = "7";
-      this.labelParity.Text = "Odd";
-      this.labelStopBits.Text = "1";
 
       base.writeToListBox = writeToListBox;
 
-      object[] baudRates = { 115200, 57600, 56000, 38400, 28800, 19200, 14400, 9600, 4800, 2400, 1200, 600, 300, 110 };
+      object[] baudRates = { 115200, 57600, /*56000,*/ 38400, 28800, 19200, 14400, 9600,/* 4800, 2400,*/ 1200 /*, 600, 300, 110*/ };
       this.comboBoxBaudRate.Items.AddRange(baudRates);
-      this.comboBoxBaudRate.SelectedItem = 57600;
+      
 
       this.QuerySerialPorts();
 
       Properties.Settings.Default.ActiveRadioButton = "Serial";
       Properties.Settings.Default.Save();
+
+      if (!string.IsNullOrEmpty(Properties.Settings.Default.BaudRate))
+      {
+        string baudRateString = Properties.Settings.Default.BaudRate;
+        this.comboBoxBaudRate.SelectedItem = int.Parse(baudRateString);
+      }
+      else
+      {
+        this.comboBoxBaudRate.SelectedItem = 57600;
+      }
     }
 
-    internal SerialCommunicationUserControl(Action<Font, string> writeToListBox, Action onConnected, Action onDisconnected, ISerialPort serialPort)
-      : this(writeToListBox, onConnected, onDisconnected)
+    internal SerialCommunicationUserControl(Action<Font, string> writeToListBox, Action onConnected, Action onDisconnected, Button buttonDone, ISerialPort serialPort)
+      : this(writeToListBox, onConnected, onDisconnected, buttonDone)
     {
       this.serialPort = serialPort; 
     }
@@ -178,18 +186,18 @@ namespace SerialCommunicationVerifier
         return; 
       }
 
+      this.connected = false; 
       this.onDisconnected();
       this.QuerySerialPorts();
       this.comboBoxSerialPorts.Enabled = true;
       this.comboBoxBaudRate.Enabled = true;
-      this.buttonDone.Text = "&Connect"; 
     }
 
     private void QuerySerialPorts()
     {
       this.comboBoxSerialPorts.Items.Clear();
       //this.buttonSend.Enabled = false;
-      this.comboBoxSerialPorts.Enabled = false;
+      //this.comboBoxSerialPorts.Enabled = false;
       //this.textBoxInput.Enabled = false;
       this.comboBoxBaudRate.Enabled = false;
 
@@ -199,35 +207,27 @@ namespace SerialCommunicationVerifier
       {
         //MessageBox.Show("No serial ports found!");
         //this.buttonRefreshComPorts.Visible = true;
-        this.buttonDone.Enabled = false; 
+        this.comboBoxSerialPorts.Items.Add("Refresh");
+        this.onDisconnected(); 
         return;
       }
-
-      this.buttonRefreshComPorts.Visible = true;
-      this.buttonRefreshComPorts.Focus();
 
       this.comboBoxSerialPorts.Enabled = true;
       //this.buttonSend.Enabled = true;
       List<string> sortedPortNamesList = portNames.ToList();
       sortedPortNamesList.Sort();
       this.comboBoxSerialPorts.Items.AddRange(sortedPortNamesList.ToArray());
-      //this.comboBoxSerialPorts.Items.Add("Refresh");
+      this.comboBoxSerialPorts.Items.Add("Refresh");
       //this.textBoxInput.Enabled = true;
       this.comboBoxBaudRate.Enabled = true;
       //this.buttonRefreshComPorts.Visible = false;
-      this.buttonDone.Enabled = true; 
 
       this.comboBoxSerialPorts.SelectedIndex = 0;
     }
 
     internal void buttonRefreshComPorts_Click(object sender, EventArgs e)
     {
-      this.QuerySerialPorts();
-      if (this.serialPort != null && this.serialPort.IsOpen)
-      {
-        this.comboBoxSerialPorts.Enabled = false;
-        this.comboBoxBaudRate.Enabled = false; 
-      }
+
     }
 
     public override void Write(string input)
@@ -273,14 +273,22 @@ namespace SerialCommunicationVerifier
         return this.serialPort; 
       }
 
+      if (this.comboBoxSerialPorts.SelectedItem == null)
+      {
+        return null; 
+      }
+
       serialPortName = this.comboBoxSerialPorts.SelectedItem.ToString();
       int baudRate = (int)this.comboBoxBaudRate.SelectedItem;
       return new RealSerialPort(new System.IO.Ports.SerialPort(serialPortName, baudRate, System.IO.Ports.Parity.Odd, 7, System.IO.Ports.StopBits.One));
     }
 
-    internal void buttonDone_Click(object sender, EventArgs e)
+    bool connected = false; 
+
+    internal override bool ToggleConnect()
     {
-      if (this.buttonDone.Text == "&Connect")
+
+      if (!this.connected)
       {
         Debug.WriteLine(this.comboBoxSerialPorts.SelectedItem);
 
@@ -300,6 +308,11 @@ namespace SerialCommunicationVerifier
         serialPort = GetSerialPort(); // new RealSerialPort(new System.IO.Ports.SerialPort(serialPortName, baudRate, System.IO.Ports.Parity.Odd, 7, System.IO.Ports.StopBits.One));
         //serialPort.Handshake = Handshake.None;
 
+        if (serialPort == null)
+        {
+          return false; 
+        }
+
         try
         {
           serialPort.Open();
@@ -308,21 +321,22 @@ namespace SerialCommunicationVerifier
         {
           MessageBox.Show("Error opening port: " + serialPortName);
           this.QuerySerialPorts(); 
-          return;
+          return false;
         }
         catch (UnauthorizedAccessException)
         {
           MessageBox.Show("Error opening port: " + serialPortName);
           this.QuerySerialPorts(); 
-          return;
+          return false;
         }
 
         System.Threading.ThreadPool.QueueUserWorkItem(ReadSerialPort, null);
-        this.buttonDone.Text = "&Close";
         this.comboBoxBaudRate.Enabled = false;
-        this.comboBoxSerialPorts.Enabled = false; 
+        this.comboBoxSerialPorts.Enabled = false;
 
-        this.onConnected(); 
+        this.connected = true; 
+        this.onConnected();
+        return true; 
       }
       else
       {
@@ -332,11 +346,34 @@ namespace SerialCommunicationVerifier
           this.serialPort.Close();
         }
 
-        this.buttonDone.Text = "&Connect";
         this.comboBoxBaudRate.Enabled = true;
         this.comboBoxSerialPorts.Enabled = true;
-        this.onDisconnected(); 
+        this.connected = false; 
+        this.onDisconnected();
+        return false; 
       }
+    }
+
+    private void comboBoxSerialPorts_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (comboBoxSerialPorts.SelectedItem == "Refresh")
+      {
+        this.QuerySerialPorts();
+        if (this.serialPort != null && this.serialPort.IsOpen)
+        {
+          this.comboBoxSerialPorts.Enabled = false;
+          this.comboBoxBaudRate.Enabled = false;
+        }
+
+        return; 
+      }
+    }
+
+    private void comboBoxBaudRate_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      string baudRateString = this.comboBoxBaudRate.SelectedItem.ToString();
+      Properties.Settings.Default.BaudRate = baudRateString;
+      Properties.Settings.Default.Save(); 
     }
 
   }

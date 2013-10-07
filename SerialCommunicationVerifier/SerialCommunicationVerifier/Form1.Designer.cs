@@ -37,13 +37,13 @@
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.buttonId = new System.Windows.Forms.Button();
-      this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-      this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.radioButtonSerial = new System.Windows.Forms.RadioButton();
       this.radioButtonTcpIp = new System.Windows.Forms.RadioButton();
+      this.buttonDone = new System.Windows.Forms.Button();
+      this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.contextMenuStrip1.SuspendLayout();
-      this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // textBoxInput
@@ -78,6 +78,9 @@
             this.columnHeader1});
       this.listView1.ContextMenuStrip = this.contextMenuStrip1;
       this.listView1.FullRowSelect = true;
+      this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+      this.listView1.HideSelection = false;
+      this.listView1.HoverSelection = true;
       this.listView1.Location = new System.Drawing.Point(15, 118);
       this.listView1.Name = "listView1";
       this.listView1.Size = new System.Drawing.Size(718, 283);
@@ -93,15 +96,17 @@
       // contextMenuStrip1
       // 
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.clearToolStripMenuItem});
+            this.clearToolStripMenuItem,
+            this.copyToolStripMenuItem,
+            this.selectAllToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(102, 26);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(153, 92);
       // 
       // clearToolStripMenuItem
       // 
       this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-      this.clearToolStripMenuItem.Size = new System.Drawing.Size(101, 22);
-      this.clearToolStripMenuItem.Text = "&Clear";
+      this.clearToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.clearToolStripMenuItem.Text = "c&lear";
       this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
       // 
       // buttonId
@@ -115,21 +120,6 @@
       this.buttonId.Text = "ID";
       this.buttonId.UseVisualStyleBackColor = true;
       this.buttonId.Click += new System.EventHandler(this.buttonId_Click);
-      // 
-      // menuStrip1
-      // 
-      this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
-      this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-      this.menuStrip1.Name = "menuStrip1";
-      this.menuStrip1.Size = new System.Drawing.Size(742, 24);
-      this.menuStrip1.TabIndex = 17;
-      this.menuStrip1.Text = "menuStrip1";
-      // 
-      // aboutToolStripMenuItem
-      // 
-      this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-      this.aboutToolStripMenuItem.Size = new System.Drawing.Size(12, 20);
       // 
       // groupBox1
       // 
@@ -164,11 +154,36 @@
       this.radioButtonTcpIp.Text = "TCP/IP";
       this.radioButtonTcpIp.UseVisualStyleBackColor = true;
       // 
+      // buttonDone
+      // 
+      this.buttonDone.Location = new System.Drawing.Point(15, 60);
+      this.buttonDone.Name = "buttonDone";
+      this.buttonDone.Size = new System.Drawing.Size(75, 23);
+      this.buttonDone.TabIndex = 22;
+      this.buttonDone.Text = "&Connect";
+      this.buttonDone.UseVisualStyleBackColor = true;
+      this.buttonDone.Click += new System.EventHandler(this.buttonDone_Click);
+      // 
+      // copyToolStripMenuItem
+      // 
+      this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+      this.copyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.copyToolStripMenuItem.Text = "&copy";
+      this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+      // 
+      // selectAllToolStripMenuItem
+      // 
+      this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
+      this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.selectAllToolStripMenuItem.Text = "select &all";
+      this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(742, 474);
+      this.Controls.Add(this.buttonDone);
       this.Controls.Add(this.radioButtonTcpIp);
       this.Controls.Add(this.radioButtonSerial);
       this.Controls.Add(this.groupBox1);
@@ -176,17 +191,13 @@
       this.Controls.Add(this.listView1);
       this.Controls.Add(this.buttonSend);
       this.Controls.Add(this.textBoxInput);
-      this.Controls.Add(this.menuStrip1);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.MainMenuStrip = this.menuStrip1;
-      this.MinimumSize = new System.Drawing.Size(744, 461);
+      this.MinimumSize = new System.Drawing.Size(400, 300);
       this.Name = "Form1";
       this.Text = "Lake Shore Instrument Communication Utility version 0.1";
       this.Load += new System.EventHandler(this.Form1_Load);
       this.Resize += new System.EventHandler(this.Form1_Resize);
       this.contextMenuStrip1.ResumeLayout(false);
-      this.menuStrip1.ResumeLayout(false);
-      this.menuStrip1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -196,16 +207,17 @@
 
         internal System.Windows.Forms.TextBox textBoxInput;
         internal System.Windows.Forms.Button buttonSend;
-        private System.Windows.Forms.ListView listView1;
+        internal System.Windows.Forms.ListView listView1;
         internal System.Windows.Forms.Button buttonId;
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
         public System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton radioButtonSerial;
         private System.Windows.Forms.RadioButton radioButtonTcpIp;
+        internal System.Windows.Forms.Button buttonDone;
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
     }
 }
 

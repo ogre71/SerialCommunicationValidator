@@ -73,13 +73,24 @@ namespace CommunicationUtilityUnitTestProject
 
       form1.TestTextBoxInput(new System.Windows.Forms.KeyEventArgs(System.Windows.Forms.Keys.Up));
 
+      Assert.IsTrue(form1.textBoxInput.Text == "fruit bats");
+
+      form1.TestTextBoxInput(new System.Windows.Forms.KeyEventArgs(System.Windows.Forms.Keys.Up));
+
       Assert.IsTrue(form1.textBoxInput.Text == "squid");
 
+      form1.TestTextBoxInput(new System.Windows.Forms.KeyEventArgs(System.Windows.Forms.Keys.Down));
+
+      Assert.IsTrue(form1.textBoxInput.Text == "fruit bats");
+
+      form1.TestTextBoxInput(new System.Windows.Forms.KeyEventArgs(System.Windows.Forms.Keys.Up));
       form1.TestTextBoxInput(new System.Windows.Forms.KeyEventArgs(System.Windows.Forms.Keys.Up));
 
       Assert.IsTrue(form1.textBoxInput.Text == "cheese");
 
       form1.TestTextBoxInput(new System.Windows.Forms.KeyEventArgs(System.Windows.Forms.Keys.Up));
+      form1.TestTextBoxInput(new System.Windows.Forms.KeyEventArgs(System.Windows.Forms.Keys.Up));
+      form1.TestTextBoxInput(new System.Windows.Forms.KeyEventArgs(System.Windows.Forms.Keys.Up));
 
       Assert.IsTrue(form1.textBoxInput.Text == "cheese");
 
@@ -93,6 +104,7 @@ namespace CommunicationUtilityUnitTestProject
       form1.TestTextBoxInput(new System.Windows.Forms.KeyEventArgs(System.Windows.Forms.Keys.Down));
       form1.TestTextBoxInput(new System.Windows.Forms.KeyEventArgs(System.Windows.Forms.Keys.Down));
 
+      Assert.IsTrue(form1.textBoxInput.Text == "fruit bats"); 
     }
 
     [TestMethod]
@@ -128,6 +140,7 @@ namespace CommunicationUtilityUnitTestProject
 
       fake.WriteToListView("All work and no play makes Johnny a dull boy.");
 
+      Assert.IsTrue(form1.listView1.Items[0].Text == "All work and no play makes Johnny a dull boy.");
     }
 
     internal class MockishSerialPort : SerialCommunicationUserControl.ISerialPort
@@ -168,17 +181,45 @@ namespace CommunicationUtilityUnitTestProject
     {
       Form1 form1 = new Form1();
       MockishSerialPort mockishSerialPort = new MockishSerialPort();
-      SerialCommunicationUserControl fakeSerialCommunicationUserControl = new SerialCommunicationUserControl(form1.WriteToListView, form1.OnConnected, form1.OnDisconnected, mockishSerialPort);
+      SerialCommunicationUserControl fakeSerialCommunicationUserControl = new SerialCommunicationUserControl(form1.WriteToListView, form1.OnConnected, form1.OnDisconnected, form1.buttonDone, mockishSerialPort);
       form1.SwapUserControl(fakeSerialCommunicationUserControl);
-      fakeSerialCommunicationUserControl.buttonDone_Click(null, null);
+
+      fakeSerialCommunicationUserControl.ToggleConnect();
       fakeSerialCommunicationUserControl.Write("Cheese!");
       fakeSerialCommunicationUserControl.buttonRefreshComPorts_Click(null, null); 
-      fakeSerialCommunicationUserControl.buttonDone_Click(null, null);
+      fakeSerialCommunicationUserControl.ToggleConnect();
       fakeSerialCommunicationUserControl.resetBecauseOfError();
 
       form1.Show(); 
 
       fakeSerialCommunicationUserControl.Close(); 
+    }
+
+    [TestMethod]
+    public void TestBaudRateIsSaved()
+    {
+      Form1 form1 = new Form1();
+      MockishSerialPort mockishSerialPort = new MockishSerialPort();
+      SerialCommunicationUserControl fakeSerialCommunicationUserControl = new SerialCommunicationUserControl(form1.WriteToListView, form1.OnConnected, form1.OnDisconnected, form1.buttonDone, mockishSerialPort);
+      form1.SwapUserControl(fakeSerialCommunicationUserControl);
+
+      fakeSerialCommunicationUserControl.comboBoxBaudRate.SelectedItem = 9600;
+
+      Form1 form2 = new Form1();
+      MockishSerialPort mockishSerialPort2 = new MockishSerialPort();
+      SerialCommunicationUserControl fakeSerialCommunicationUserControl2 = new SerialCommunicationUserControl(form2.WriteToListView, form2.OnConnected, form2.OnDisconnected, form2.buttonDone, mockishSerialPort2);
+      form2.SwapUserControl(fakeSerialCommunicationUserControl2);
+
+      Assert.IsTrue((int)fakeSerialCommunicationUserControl2.comboBoxBaudRate.SelectedItem == 9600);
+      fakeSerialCommunicationUserControl2.comboBoxBaudRate.SelectedItem = 14400;
+
+      Form1 form3 = new Form1();
+      MockishSerialPort mockishSerialPort3 = new MockishSerialPort();
+      SerialCommunicationUserControl fakeSerialCommunicationUserControl3 = new SerialCommunicationUserControl(form3.WriteToListView, form3.OnConnected, form3.OnDisconnected, form3.buttonDone, mockishSerialPort3);
+      form3.SwapUserControl(fakeSerialCommunicationUserControl3);
+
+      Assert.IsTrue((int)fakeSerialCommunicationUserControl3.comboBoxBaudRate.SelectedItem == 14400);
+      
     }
 
     internal class MockishTcpIpClient : TcpIpCommunicationUserControl.ITcpClient
@@ -220,9 +261,9 @@ namespace CommunicationUtilityUnitTestProject
     {
       Form1 form1 = new Form1();
       MockishTcpIpClient mockishTcpIpClient = new MockishTcpIpClient();
-      TcpIpCommunicationUserControl fakeTcpIpCommunicationUserControl = new TcpIpCommunicationUserControl(form1.WriteToListView, form1.OnConnected, form1.OnDisconnected, mockishTcpIpClient);
+      TcpIpCommunicationUserControl fakeTcpIpCommunicationUserControl = new TcpIpCommunicationUserControl(form1.WriteToListView, form1.OnConnected, form1.OnDisconnected, form1.buttonDone, mockishTcpIpClient);
       form1.SwapUserControl(fakeTcpIpCommunicationUserControl);
-      fakeTcpIpCommunicationUserControl.buttonDone_Click(null, null);
+      fakeTcpIpCommunicationUserControl.ToggleConnect();
       fakeTcpIpCommunicationUserControl.Write("Cheese!");
 
       fakeTcpIpCommunicationUserControl.textBoxInstrumentAddress.Text = "Cheese!";

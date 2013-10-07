@@ -27,13 +27,15 @@ namespace SerialCommunicationVerifier
 
     private void Form1_Load(object sender, EventArgs e)
     {
-      if (Properties.Settings.Default.ActiveRadioButton == "Serial")
+      this.columnHeader1.Width = this.listView1.Width - 25;
+
+      if (Properties.Settings.Default.ActiveRadioButton != "Serial")
       {
-        this.radioButtonSerial.Checked = true;
+        this.radioButtonTcpIp.Checked = true;
       }
       else
       {
-        this.radioButtonTcpIp.Checked = true; 
+        this.radioButtonSerial.Checked = true; 
       }
 
       ThreadPool.QueueUserWorkItem(new WaitCallback((object ob) => { this.radioButtonSerial_CheckedChanged(null, null); }));
@@ -41,10 +43,13 @@ namespace SerialCommunicationVerifier
 
     private void buttonSend_Click(object sender, EventArgs e)
     {
-      this.write(this.textBoxInput.Text + "\r\n");
+      this.stackIndex = 0;
+      keyLog.Push(textBoxInput.Text);
+    
+      this.write(this.textBoxInput.Text + Environment.NewLine);
 
       Font font = new System.Drawing.Font("System", 10, FontStyle.Italic);
-      ListViewItem listViewItem = this.listView1.Items.Add(new ListViewItem(new string[] { this.textBoxInput.Text }, 0, System.Drawing.Color.Black, System.Drawing.Color.White, font));
+      ListViewItem listViewItem = this.listView1.Items.Add(new ListViewItem(new string[] { this.textBoxInput.Text + Environment.NewLine }, 0, System.Drawing.Color.Black, System.Drawing.Color.White, font));
       listViewItem.EnsureVisible();
       this.textBoxInput.Clear(); 
     }
@@ -60,14 +65,11 @@ namespace SerialCommunicationVerifier
       this.buttonSend_Click(null, null); 
     }
 
-    private void clearToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      this.listView1.Items.Clear();
-    }
+
 
     private void Form1_Resize(object sender, EventArgs e)
     {
-      this.columnHeader1.Width = this.listView1.Width;
+      this.columnHeader1.Width = this.listView1.Width - 25;
       this.listView1.HeaderStyle = ColumnHeaderStyle.None;
     }
 
@@ -81,22 +83,25 @@ namespace SerialCommunicationVerifier
 
       if (this.radioButtonSerial.Checked == true)
       {
-        SerialCommunicationUserControl uc = new SerialCommunicationUserControl(this.WriteToListView, this.OnConnected, this.OnDisconnected);
+        SerialCommunicationUserControl uc = new SerialCommunicationUserControl(this.WriteToListView, this.OnConnected, this.OnDisconnected, this.buttonDone);
         SwapUserControl(uc); 
       }
       else
       {
-        TcpIpCommunicationUserControl uc = new TcpIpCommunicationUserControl(this.WriteToListView, this.OnConnected, this.OnDisconnected);
+        TcpIpCommunicationUserControl uc = new TcpIpCommunicationUserControl(this.WriteToListView, this.OnConnected, this.OnDisconnected, this.buttonDone);
         this.SwapUserControl(uc); 
       }
     }
 
     internal void SwapUserControl(CommunicationUserControl newUserControl)
     {
+      this.buttonDone.Text = "&Connect";
+
       if (this.groupBox1.Controls.Count > 0)
       { 
         CommunicationUserControl currentUserControl = (CommunicationUserControl) this.groupBox1.Controls[0];
-        currentUserControl.Close(); 
+        currentUserControl.Close();
+        currentUserControl.Dispose(); 
 
         this.groupBox1.Controls.Clear();
       }
@@ -127,6 +132,7 @@ namespace SerialCommunicationVerifier
       this.buttonSend.Enabled = true;
       this.buttonId.Enabled = true;
 
+      this.buttonDone.Text = "&Close"; 
       this.textBoxInput.Focus(); 
     }
 
@@ -137,10 +143,13 @@ namespace SerialCommunicationVerifier
         this.Invoke(new Action(OnDisconnected)); 
         return; 
       }
+
+      this.buttonDone.Text = "&Connect"; 
       this.textBoxInput.Enabled = false;
       this.buttonSend.Enabled = false;
       this.buttonId.Enabled = false; 
     }
+
 
     private void textBoxInput_KeyUp(object sender, KeyEventArgs e)
     {
@@ -150,10 +159,7 @@ namespace SerialCommunicationVerifier
         {
           return;
         }
-
-        stackIndex = 0;
-        keyLog.Push(textBoxInput.Text);
-        
+    
         this.buttonSend_Click(null, null);
       }
       else if (e.KeyData == Keys.Up)
@@ -164,23 +170,23 @@ namespace SerialCommunicationVerifier
         }
 
         stackIndex++;
-        if (stackIndex > keyLog.Count - 1)
+        if (stackIndex > keyLog.Count)
         {
-          stackIndex = keyLog.Count - 1;
+          stackIndex = keyLog.Count;
         }
 
-        textBoxInput.Text = keyLog.ElementAt(stackIndex);
+        textBoxInput.Text = keyLog.ElementAt(stackIndex - 1);
       }
       else if (e.KeyData == Keys.Down)
       {
         stackIndex--;
-        if (stackIndex < 0)
+        if (stackIndex < 1)
         {
-          stackIndex = 0;
+          stackIndex = 1;
           return;
         }
 
-        textBoxInput.Text = keyLog.ElementAt(stackIndex);
+        textBoxInput.Text = keyLog.ElementAt(stackIndex - 1);
       }
     }
 
@@ -193,5 +199,45 @@ namespace SerialCommunicationVerifier
     {
       this.textBoxInput_KeyUp(null, e); 
     }
+
+    private void buttonDone_Click(object sender, EventArgs e)
+    {
+      CommunicationUserControl currentUserControl = (CommunicationUserControl)this.groupBox1.Controls[0];
+      bool connected = currentUserControl.ToggleConnect();
+
+      if (connected)
+      {
+        this.buttonDone.Text = "&Close";
+      }
+      else
+      {
+        this.buttonDone.Text = "&Connect";
+      }
+    }
+
+    private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      this.listView1.Items.Clear();
+    }
+
+    private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      StringBuilder sb = new StringBuilder(); 
+      foreach (ListViewItem item in this.listView1.SelectedItems)
+      {
+        sb.Append(item.Text.Replace("\0", "")); 
+      }
+
+      System.Windows.Forms.Clipboard.SetData(DataFormats.Text, sb.ToString()); 
+    }
+
+    private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in this.listView1.Items)
+      {
+        item.Selected = true; 
+      }
+    }
+
   }
 }

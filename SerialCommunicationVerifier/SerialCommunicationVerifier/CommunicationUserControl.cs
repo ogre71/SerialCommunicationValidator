@@ -30,6 +30,11 @@ namespace SerialCommunicationVerifier
       this.onDisconnected = onDisconnected;
     }
 
+    internal virtual bool ToggleConnect()
+    {
+      throw new NotImplementedException(); 
+    }
+
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public virtual void Write(string message) 
     {

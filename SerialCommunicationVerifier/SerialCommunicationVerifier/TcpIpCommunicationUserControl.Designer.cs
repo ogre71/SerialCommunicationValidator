@@ -30,7 +30,6 @@
     {
       this.textBoxInstrumentAddress = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.buttonDone = new System.Windows.Forms.Button();
       this.labelPort = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
@@ -54,17 +53,6 @@
       this.label1.TabIndex = 1;
       this.label1.Text = "Instrument Address";
       // 
-      // buttonDone
-      // 
-      this.buttonDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDone.Location = new System.Drawing.Point(411, 88);
-      this.buttonDone.Name = "buttonDone";
-      this.buttonDone.Size = new System.Drawing.Size(75, 23);
-      this.buttonDone.TabIndex = 2;
-      this.buttonDone.Text = "&Connect";
-      this.buttonDone.UseVisualStyleBackColor = true;
-      this.buttonDone.Click += new System.EventHandler(this.buttonDone_Click);
-      // 
       // labelPort
       // 
       this.labelPort.AutoSize = true;
@@ -79,11 +67,10 @@
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.labelPort);
-      this.Controls.Add(this.buttonDone);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.textBoxInstrumentAddress);
       this.Name = "TcpIpCommunicationUserControl";
-      this.Size = new System.Drawing.Size(489, 114);
+      this.Size = new System.Drawing.Size(489, 71);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -93,7 +80,6 @@
 
     internal System.Windows.Forms.TextBox textBoxInstrumentAddress;
     private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Button buttonDone;
     private System.Windows.Forms.Label labelPort;
   }
 }
